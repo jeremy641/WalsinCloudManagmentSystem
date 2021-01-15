@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>華新雲會議管理系統全文檔</title>
+	</head>
+	<body style="background:url('WalsinCloudMeeting.gif') space repeat 0% 10%/ 1580px;">
+		<div id="show" style="font-size:30px; font-weight:bold;">會議開始...</div>
+		<script type="text/javascript">
+		var aa = 0;
+		
+		function stopscroll(){
+			clearInterval(scroll);
+			aa = 1;					
+		}
+	
+			
+		if (!('webkitSpeechRecognition' in window)) {
+		// do something...
+		}//if()
+		else {
+		var scroll = setInterval(function(){window.scrollTo(0, document.body.scrollHeight)},100);
+		var show = document.getElementById('show');
+		var recognition = new webkitSpeechRecognition();
+		var wai = '<h3 style="font-size:30px; opacity: 1; "><br>未發言已超過一段時間!請點擊允許麥克風以繼續';
+		var owari =  '<h3 style="font-size:30px; opacity: 1; "><br>本會議已結束!';
+		recognition.continuous=true;
+		recognition.interimResults=true;
+		recognition.lang="cmn-Hant-TW";
+		recognition.onstart=function(){
+		console.log('開始辨識...');
+		};
+		recognition.onend=function(){
+		console.log('停止辨識!');
+		show.innerHTML += wai;
+		window.document.body.scrollTop = 999999;
+		window.document.documentElement.scrollTop = 999999;
+		if(aa === 0){
+			recognition.start();
+		}else{
+			show.innerHTML+=owari; 
+			alert("本會議已結束!")
+			recognition.stop();
+		}
+
+		
+		};
+		recognition.onresult=function(event){
+		var interim_transcript = '';
+		var final_transcript = '<h3 style="font-size:20px; opacity: 1; "><br>發言者: ';
+		console.log(event);
+		var i = event.resultIndex;
+		var j = event.results[i].length-1;
+		for (var i = event.resultIndex; i < event.results.length; ++i) {
+      if (event.results[i].isFinal) {
+		final_transcript += event.results[i][j].transcript;
+		console.log(final_transcript);
+		show.innerHTML += final_transcript;
+      } else {
+		interim_transcript += event.results[i][0].transcript;
+      }
+    }
+		
+	
+		
+		
+		
+
+		};
+		recognition.start();
+		}//else()
+		
+		</script>
+		<input style="position: fixed; left: 700px;top:15px;" type="button" onclick="stopscroll()" id="PPP" value="結束會議">
+	</body>
+</html>
